@@ -48,10 +48,16 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000):
   inliers=[]
   n_points=len(xyz)
 
+  inlier_counts = []
+  iteration_number = []
+
   i=1
 
   while i<iterations:
+
+    
     idx_samples = np.random.choice(range(n_points), 3)
+
 
     pts = xyz[idx_samples]
 
@@ -65,10 +71,17 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000):
 
     idx_candidates = np.where(np.abs(distance) <= threshold)[0]
 
+    
     if len(idx_candidates) > len(inliers):
+      inlier_counts.append(len(idx_candidates))
+      iteration_number.append(i)
+
+      
       equation = [a,b,c,d]
       inliers = idx_candidates
-      best_plane_point_indices = idx_samples
     
     i+=1
-  return equation, inliers, best_plane_point_indices
+
+  plt.scatter(iteration_number, inlier_counts)
+  plt.show()
+  return equation, inliers

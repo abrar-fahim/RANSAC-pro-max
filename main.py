@@ -38,7 +38,7 @@ for i in range(max_plane_idx):
 
     if threshold > start_threshold * NOISE_TOLERANCE_FACTOR:
         break
-    segment_models[i], inliers, best_plane_point_idx  = ransac_plane(rest.points, threshold=threshold, iterations=1000)
+    segment_models[i], inliers  = ransac_plane(rest.points, threshold=threshold, iterations=1000)
 
     segments[i]=rest.select_by_index(inliers)
 
