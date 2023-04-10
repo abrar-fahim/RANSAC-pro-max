@@ -1,56 +1,30 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
-import open3d as o3d
 from sklearn.neighbors import KDTree
 
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator
-
-from typing import List, Tuple, Callable
-
 np.random.seed(0)
-
 NEAREST_NEIGHBOR_COUNT = 12
-
-  
-def another_draw_planes(segments, max_plane_idx):
+def draw_planes(segments, max_plane_idx):
   import pyvista as pv
   import numpy as np
 
-  # Create random points
-  # points = np.random.rand(1000, 3)
+  # Define a list of colors for the planes
+  colors = ["red", "green", "blue", "yellow", "orange"]
+
+  # Create a figure and an axis object
+  fig = plt.figure()
+  ax = fig.add_subplot(projection="3d")
 
   for i in range(max_plane_idx):
     
     points = np.array(segments[i].points)
 
+    X = points[:,0]
+    Y = points[:,1]
+    Z = points[:,2]
+    ax.plot_trisurf(X, Y, Z, color=colors[i])
 
-    # Create a mesh from the points
-    mesh = pv.PolyData(points)
-
-    # Create a surface from the mesh
-    surface = mesh.delaunay_3d()
-
-    # Plot the surface
-    surface.plot(show_edges=True)
-
-
-def draw_planes_o3d(segments, max_plane_idx):
-  # Generate random points
-  # points = np.random.rand(1000, 3)
-
-  # Compute convex hull
-
-  hulls = []
-  for i in range(max_plane_idx):
-    hull = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(
-        o3d.geometry.PointCloud(segments[i]), alpha=0.1)
-    
-    hulls.append(hull)
-
-  # Draw plane
-  o3d.visualization.draw_geometries(hulls)
+  plt.show()
 
 
 
@@ -84,7 +58,6 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000):
     vecA = pts[1] - pts[0]
     vecB = pts[2] - pts[0]
     normal = np.cross(vecA, vecB)
-    # a,b,c = normal / np.linalg.norm(normal)
     a, b, c = normal
     d=-np.sum(normal*pts[1])
 

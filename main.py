@@ -12,18 +12,9 @@ input_path="dataset/02691156/1a04e3eab45ca15dd86060f189eb133_8x8.npz" # aeroplan
 
 # input_path="dataset/02691156/1a32f10b20170883663e90eaf6b4ca52_8x8.npz" # aeroplane 2
 # input_path="dataset/03636649/1a5ebc8575a4e5edcc901650bbbbb0b5_8x8.npz" # lamp
-
 # input_path="dataset/03797390/fad118b32085f3f2c2c72e575af174cd_8x8.npz" # microwave
-
 # input_path = 'dataset/03636649/1c6701a695ba1b8228eb8d149efa4062_8x8.npz'
-
 # input_path = 'dataset/04379243/1a2914169a3a1536a71646339441ab0c_8x8.npz'
-
-
-
-#dataname="TLS_kitchen.ply"
-
-#pcd = np.load(input_path)
 
 with np.load(input_path) as data:
     pcdnp = data['pc']
@@ -32,9 +23,6 @@ pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(pcdnp)
 
 
-# Step 4: Scaling and automation
-
-# 4.1 RANSAC loop for multiple planar shapes detection
 segment_models={}
 
 plane_idxs = {}
@@ -42,9 +30,6 @@ segments={}
 max_plane_idx=4
 rest=pcd
 # get threshold
-
-# threshold = 0.02
-
 start_threshold = determine_thresold(rest.points)
 
 for i in range(max_plane_idx):
@@ -53,15 +38,6 @@ for i in range(max_plane_idx):
 
     if threshold > start_threshold * NOISE_TOLERANCE_FACTOR:
         break
-    print("threshold: ", threshold)
-
-
-
-    # segment_models[i], inliers = rest.segment_plane(distance_threshold=threshold,ransac_n=3,num_iterations=1000)
-
-    
-
-    # segment_models[i], inliers = ransac_plane(rest.points, threshold=0.01, iterations=1000)
     segment_models[i], inliers, best_plane_point_idx  = ransac_plane(rest.points, threshold=threshold, iterations=1000)
 
     segments[i]=rest.select_by_index(inliers)
@@ -70,16 +46,9 @@ for i in range(max_plane_idx):
     segments[i].paint_uniform_color(list(colors[:3]))
     rest = rest.select_by_index(inliers, invert=True)
     print("pass",i,"/",max_plane_idx,"done.")
-# plt.show()
 
-# print('segments ', segments)
-
-# draw_planes_o3d(segments, max_plane_idx)
-# draw_planes(segments, max_plane_idx)
-another_draw_planes(segments, max_plane_idx)
-# draw_planes_o3d(plane_idxs, max_plane_idx)
+draw_planes(segments, max_plane_idx)
 
 
 o3d.visualization.draw_geometries([segments[i] for i in range(max_plane_idx)])
-
 o3d.visualization.draw_geometries([segments[i] for i in range(max_plane_idx)]+[rest])
