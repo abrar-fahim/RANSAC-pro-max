@@ -29,15 +29,28 @@ plane_idxs = {}
 segments={}
 max_plane_idx=4
 rest=pcd
+
+# add noise to rest points
+# nprest = np.asarray(rest.points)
+# min = np.min(nprest, axis=0)
+# max = np.max(nprest, axis=0)
+# noise = np.random.normal(min*2, max*2, [int(nprest.shape[0]*0.01), 3])
+# nprest = np.concatenate((nprest, noise), axis=0)
+# rest.points = o3d.utility.Vector3dVector(nprest)
+
 # get threshold
 start_threshold = determine_thresold(rest.points)
 
+num_planes = 0
 for i in range(max_plane_idx):
     colors = plt.get_cmap("tab20")(i)
     threshold = determine_thresold(rest.points)
+    #threshold = start_threshold
 
-    if threshold > start_threshold * NOISE_TOLERANCE_FACTOR:
-        break
+    # if threshold > start_threshold * NOISE_TOLERANCE_FACTOR:
+    #     break
+    num_planes += 1
+
     segment_models[i], inliers  = ransac_plane(rest.points, threshold=threshold, iterations=1000)
 
     segments[i]=rest.select_by_index(inliers)
@@ -47,8 +60,8 @@ for i in range(max_plane_idx):
     rest = rest.select_by_index(inliers, invert=True)
     print("pass",i,"/",max_plane_idx,"done.")
 
-draw_planes(segments, max_plane_idx)
+#draw_planes(segments, num_planes)
 
 
-o3d.visualization.draw_geometries([segments[i] for i in range(max_plane_idx)])
-o3d.visualization.draw_geometries([segments[i] for i in range(max_plane_idx)]+[rest])
+o3d.visualization.draw_geometries([segments[i] for i in range(num_planes)])
+#o3d.visualization.draw_geometries([segments[i] for i in range(num_planes)]+[rest])

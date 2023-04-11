@@ -16,8 +16,9 @@ def draw_planes(segments, max_plane_idx):
   fig = plt.figure()
   ax = fig.add_subplot(projection="3d")
 
+  #print segments
+  print("segments", segments)
   for i in range(max_plane_idx):
-    
     points = np.array(segments[i].points)
 
     X = points[:,0]
@@ -32,10 +33,20 @@ def draw_planes(segments, max_plane_idx):
 def determine_thresold(xyz):
   xyz = np.array(xyz)
 
-
   tree = KDTree(np.array(xyz), leaf_size=2)
-  nearest_dist, nearest_ind = tree.query(xyz, k=8)
-  mean_distance = np.mean(nearest_dist[:,1:])
+  nearest_dist, nearest_ind = tree.query(xyz, k=8) 
+  # nearest dist shape: (n, k)
+
+  # take top 0.30 of distances 
+  nearest_dist_sorted = np.sort(nearest_dist, axis=0)
+  top_points_to_take = 0.20
+  top_nearest_dists = nearest_dist_sorted[int(nearest_dist_sorted.shape[0]*top_points_to_take):,:]
+
+  # take mean of top 0.20 of distances
+
+
+  #mean_distance = np.mean(nearest_dist[:,1:])
+  mean_distance = np.mean(top_nearest_dists[:,1:])
 
   return mean_distance
 
@@ -64,7 +75,10 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000):
   i=1
 
   while i<iterations:
-    pts = sample_convex_hull(xyz, 3)
+    #pts = sample_convex_hull(xyz, 3)
+
+    idx_samples = np.random.choice(range(n_points), 3, replace=False)
+    pts = xyz[idx_samples]
 
     vecA = pts[1] - pts[0]
     vecB = pts[2] - pts[0]
@@ -89,6 +103,6 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000):
 
   print('inliers', len(inliers))
   print('iteration number', iteration_number[-1])
-  plt.scatter(iteration_number, inlier_counts)
-  plt.show()
+  # plt.scatter(iteration_number, inlier_counts)
+  # plt.show()
   return equation, inliers
