@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KDTree
+import scipy.spatial as sp
 
 np.random.seed(0)
 NEAREST_NEIGHBOR_COUNT = 12
@@ -31,14 +32,23 @@ def draw_planes(segments, max_plane_idx):
 def determine_thresold(xyz):
   xyz = np.array(xyz)
 
-  
+
   tree = KDTree(np.array(xyz), leaf_size=2)
   nearest_dist, nearest_ind = tree.query(xyz, k=8)
   mean_distance = np.mean(nearest_dist[:,1:])
 
   return mean_distance
 
-
+def sample_convex_hull(points, n):
+  # Compute the convex hull of the points
+  hull = sp.ConvexHull(points)
+  # Get the indices of the vertices of the hull
+  vertices = hull.vertices
+  #print('vertices', vertices.shape)
+  # Randomly sample n indices from the vertices
+  sample_indices = np.random.choice(vertices, size=n, replace=False)
+  # Return the sampled points
+  return points[sample_indices]
 
 # https://github.com/salykovaa/ransac/blob/main/fit_plane.py
 def ransac_plane(xyz, threshold=0.01, iterations=1000):
@@ -54,12 +64,7 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000):
   i=1
 
   while i<iterations:
-
-    
-    idx_samples = np.random.choice(range(n_points), 3)
-
-
-    pts = xyz[idx_samples]
+    pts = sample_convex_hull(xyz, 3)
 
     vecA = pts[1] - pts[0]
     vecB = pts[2] - pts[0]
@@ -82,6 +87,8 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000):
     
     i+=1
 
+  print('inliers', len(inliers))
+  print('iteration number', iteration_number[-1])
   plt.scatter(iteration_number, inlier_counts)
   plt.show()
   return equation, inliers
