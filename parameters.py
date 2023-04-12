@@ -37,8 +37,8 @@ parameters = {
 
 
     # changing
-    'add_noise': True,
+    'add_noise': False,
     'threshold_inside_loop': False, # False is better for noisy
     'top_points_to_take': 1, # or 1, or 0.2
-    'sampling_method': 'refined_convex_hull', # 'random', 'convex_hull' or 'refined_convex_hull'
+    'sampling_method': 'random', # 'random', 'convex_hull' or 'refined_convex_hull'
 }

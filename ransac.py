@@ -53,7 +53,24 @@ def draw_segment_boundaries(segments, num_planes):
   # colors = plt.get_cmap("tab20")(i)
 
   # convex_hulls = [o3d.geometry.compute_point_cloud_convex_hull(segments[i]) for i in range(num_planes)]
-  convex_hulls = [segments[i].compute_convex_hull()[0].paint_uniform_color(list(plt.get_cmap("tab20")(i)[:3])) for i in range(num_planes)]
+
+  clustered_segments = {}
+  # do dbscan clustering for each segment point clouds
+  for i in range(num_planes):
+    labels = np.array(segments[i].cluster_dbscan(eps=0.02, min_points=10))
+
+    for label in labels:
+      print('label', label)
+      clustered_segments[i + label] = segments[i].select_by_index(np.where(labels == label)[0])
+    
+
+
+
+
+
+
+  # convex_hulls = [segments[i].compute_convex_hull()[0].paint_uniform_color(list(plt.get_cmap("tab20")(i)[:3])) for i in range(num_planes)]
+  convex_hulls = [segment.compute_convex_hull()[0].paint_uniform_color(list(plt.get_cmap("tab20")(i)[:3])) for segment in clustered_segments]
 
   # o3d_hulls = []
 
