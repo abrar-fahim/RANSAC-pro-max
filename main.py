@@ -5,18 +5,13 @@ import matplotlib.pyplot as plt
 
 from ransac import *
 
+from parameters import parameters
+
 NOISE_TOLERANCE_FACTOR = 2
 
-#create paths and load data
-input_path="dataset/02691156/1a04e3eab45ca15dd86060f189eb133_8x8.npz" # aeroplane
 
-# input_path="dataset/02691156/1a32f10b20170883663e90eaf6b4ca52_8x8.npz" # aeroplane 2
-# input_path="dataset/03636649/1a5ebc8575a4e5edcc901650bbbbb0b5_8x8.npz" # lamp
-# input_path="dataset/03797390/fad118b32085f3f2c2c72e575af174cd_8x8.npz" # microwave
-# input_path = 'dataset/03636649/1c6701a695ba1b8228eb8d149efa4062_8x8.npz'
-# input_path = 'dataset/04379243/1a2914169a3a1536a71646339441ab0c_8x8.npz'
 
-with np.load(input_path) as data:
+with np.load(parameters['input_path']) as data:
     pcdnp = data['pc']
 
 pcd = o3d.geometry.PointCloud()
@@ -24,34 +19,49 @@ pcd.points = o3d.utility.Vector3dVector(pcdnp)
 
 
 segment_models={}
-
-plane_idxs = {}
 segments={}
-max_plane_idx=4
+max_plane_idx= parameters['max_plane_idx']
 rest=pcd
 
-# add noise to rest points
-# nprest = np.asarray(rest.points)
-# min = np.min(nprest, axis=0)
-# max = np.max(nprest, axis=0)
-# noise = np.random.normal(min*2, max*2, [int(nprest.shape[0]*0.01), 3])
-# nprest = np.concatenate((nprest, noise), axis=0)
-# rest.points = o3d.utility.Vector3dVector(nprest)
+
+if parameters['add_noise']:
+    # add noise to rest points
+    rest = add_noise(rest)
+
 
 # get threshold
 start_threshold = determine_thresold(rest.points)
 
+# print("noise ratio", get_noise_ratio_using_dbscan(rest.points, start_threshold))
+
+# cluster_distance_cutoff = int(2 / (1 - get_noise_ratio_using_dbscan(rest.points, start_threshold)))
+
 num_planes = 0
 for i in range(max_plane_idx):
     colors = plt.get_cmap("tab20")(i)
-    threshold = determine_thresold(rest.points)
-    #threshold = start_threshold
 
-    # if threshold > start_threshold * NOISE_TOLERANCE_FACTOR:
-    #     break
+    if parameters['threshold_inside_loop']:
+        threshold = determine_thresold(rest.points)
+    else:
+        threshold = start_threshold
+
+    if parameters['automatic_num_planes']:
+
+        # if 0, then 2
+        # if 1, then inf
+
+        # print("cluster_distance_cutoff", cluster_distance_cutoff)
+
+        calculated_threshold = determine_thresold(rest.points)
+        print('calculated_threshold', calculated_threshold)
+        if calculated_threshold > start_threshold * parameters['cluster_distance_cutoff']:
+        # if calculated_threshold > start_threshold * cluster_distance_cutoff:
+            break
+
+    
     num_planes += 1
 
-    segment_models[i], inliers  = ransac_plane(rest.points, threshold=threshold, iterations=1000)
+    segment_models[i], inliers  = ransac_plane(rest.points, threshold=threshold, iterations=parameters['iterations'], sampling_method=parameters['sampling_method'])
 
     segments[i]=rest.select_by_index(inliers)
 

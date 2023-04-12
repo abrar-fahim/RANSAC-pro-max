@@ -10,3 +10,8 @@ Dataset: https://www.kaggle.com/code/kerneler/starter-shapenet-0b740c60-8
 
 
 Put dataset in dataset folder
+
+To dos:
+
+- [ ] Fix automatic planes for noisy
+-- [ ] cluster distance cutoff 
