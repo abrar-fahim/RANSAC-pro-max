@@ -27,18 +27,18 @@ input_paths = {
 
 parameters = {
     # not changing
-    'input_path': input_paths['mug'],
-    'max_plane_idx': 6,
     'cluster_distance_cutoff': 2, # used if automatic_num_planes is True
     'nearest_neighbor_count': 12,
     'iterations': 1000,
-    'automatic_num_planes': False, # True doesnt work for noise
     'noise_amount': 0.01,
+    'threshold_inside_loop': False, # False is better for noisy
+    'top_points_to_take': 1, # or 1, or 0.2
 
 
     # changing
-    'add_noise': True,
-    'threshold_inside_loop': False, # False is better for noisy
-    'top_points_to_take': 1, # or 1, or 0.2
-    'sampling_method': 'refined_convex_hull', # 'random', 'convex_hull' or 'refined_convex_hull'
+    'input_path': input_paths['aeroplane'],
+    'add_noise': False,
+    'sampling_method': 'random', # 'random', 'convex_hull' or 'refined_convex_hull',
+    'automatic_num_planes': False, # True doesnt work for noise,
+    'max_plane_idx': 6,
 }
