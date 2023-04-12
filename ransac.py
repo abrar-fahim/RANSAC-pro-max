@@ -89,22 +89,16 @@ def determine_thresold(xyz, filtered_points_only=False):
   mean_distance = np.mean(top_nearest_dists[:,1:])
   return mean_distance
 
-def sample_convex_hull(points, n, refined_hull = False):
-
-  
+def sample_convex_hull(points, refined_hull = False):
   # Compute the convex hull of the points
   if refined_hull:
-
     hull = get_refined_hull(points)
   else:
     hull = sp.ConvexHull(points)
 
   # Get the indices of the vertices of the hull
   vertices = hull.vertices
-  # Randomly sample n indices from the vertices
-  sample_indices = np.random.choice(vertices, size=n, replace=False)
-  # Return the sampled points
-  return points[sample_indices]
+  return vertices
 
 def get_noise_ratio(points):
 
@@ -183,6 +177,7 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000, sampling_method='random')
   iteration_number = []
 
   i=1
+  vertices = sample_convex_hull(xyz, refined_hull= (sampling_method == 'refined_convex_hull'))
 
   while i<iterations:
 
@@ -191,10 +186,12 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000, sampling_method='random')
       pts = xyz[idx_samples]
 
     elif sampling_method == 'convex_hull':
-      pts = sample_convex_hull(xyz, 3, refined_hull=False)
+      sample_indices = np.random.choice(vertices, size=3, replace=False)
+      pts = xyz[sample_indices]
 
     elif sampling_method == 'refined_convex_hull':
-       pts = sample_convex_hull(xyz, 3, refined_hull=True)
+       sample_indices = np.random.choice(vertices, size=3, replace=False)
+       pts = xyz[sample_indices]
 
     vecA = pts[1] - pts[0]
     vecB = pts[2] - pts[0]
