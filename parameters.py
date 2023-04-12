@@ -22,7 +22,9 @@ class Sampling_method(Enum):
 input_paths = {
     'mug': "dataset/03797390/fad118b32085f3f2c2c72e575af174cd_8x8.npz",
     'aeroplane': "dataset/02691156/1a04e3eab45ca15dd86060f189eb133_8x8.npz",
-    'table':  'dataset/04379243/1a2914169a3a1536a71646339441ab0c_8x8.npz'
+    'table':  'dataset/04379243/1a2914169a3a1536a71646339441ab0c_8x8.npz',
+    'skateboard': 'dataset/04225987/1ad8d7573dc57ebc247a956ed3779e34_8x8.npz',
+    'laptop': 'dataset/03642806/1a46d6683450f2dd46c0b76a60ee4644_8x8.npz'
 }
 
 parameters = {
@@ -36,9 +38,9 @@ parameters = {
 
 
     # changing
-    'input_path': input_paths['aeroplane'],
+    'input_path': input_paths['laptop'],
     'add_noise': False,
     'sampling_method': 'random', # 'random', 'convex_hull' or 'refined_convex_hull',
-    'automatic_num_planes': False, # True doesnt work for noise,
-    'max_plane_idx': 6,
+    'automatic_num_planes': True, # True doesnt work for noise,
+    'max_plane_idx': 4,
 }
