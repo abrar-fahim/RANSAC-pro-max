@@ -47,6 +47,28 @@ def add_noise(rest):
   return rest
 
 
+def draw_segment_boundaries(segments, num_planes):
+
+  # convex_hulls = [sp.ConvexHull(np.array(segments[i].points)) for i in num_planes]
+  # colors = plt.get_cmap("tab20")(i)
+
+  # convex_hulls = [o3d.geometry.compute_point_cloud_convex_hull(segments[i]) for i in range(num_planes)]
+  convex_hulls = [segments[i].compute_convex_hull()[0].paint_uniform_color(list(plt.get_cmap("tab20")(i)[:3])) for i in range(num_planes)]
+
+  # o3d_hulls = []
+
+  # for i in range(num_planes):
+  #   o3d_hulls.append()
+
+
+
+  # convex_hulls = [o3d.geometry.TriangleMesh.compute_convex_hull(segments[i]) for i in range(num_planes)]
+
+  o3d.visualization.draw_geometries([convex_hulls[i] for i in range(num_planes)])
+
+
+
+
 
 def determine_thresold(xyz, filtered_points_only=False):
   xyz = np.array(xyz)
