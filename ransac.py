@@ -50,16 +50,50 @@ def determine_thresold(xyz):
 
   return mean_distance
 
-def sample_convex_hull(points, n):
+def sample_convex_hull(points, n, refined_hull = False):
+
+  
   # Compute the convex hull of the points
-  hull = sp.ConvexHull(points)
+  if refined_hull:
+
+    hull = get_refined_hull(points)
+  else:
+    hull = sp.ConvexHull(points)
+
   # Get the indices of the vertices of the hull
   vertices = hull.vertices
-  #print('vertices', vertices.shape)
   # Randomly sample n indices from the vertices
   sample_indices = np.random.choice(vertices, size=n, replace=False)
   # Return the sampled points
   return points[sample_indices]
+
+
+def get_refined_hull(points):
+
+  # Compute the initial convex hull
+  hull = sp.ConvexHull(points)
+
+
+  # Compute the pairwise distances between points and hull vertices
+  dist = sp.distance_matrix(points, points[hull.vertices])
+
+  # Compute the MAD of the distances along each axis
+  mad_x = np.median_absolute_deviation(dist[:, 0])
+  mad_y = np.median_absolute_deviation(dist[:, 1])
+
+  # Filter out noisy points based on MAD thresholds
+  threshold_x = np.median(dist[:, 0]) + 3 * mad_x
+  threshold_y = np.median(dist[:, 1]) + 3 * mad_y
+  mask = (dist[:, 0] < threshold_x) & (dist[:, 1] < threshold_y)
+  filtered_points = points[mask]
+
+  # Compute the refined convex hull
+  refined_hull = sp.ConvexHull(filtered_points)
+
+  return refined_hull
+
+
+
 
 # https://github.com/salykovaa/ransac/blob/main/fit_plane.py
 def ransac_plane(xyz, threshold=0.01, iterations=1000):
