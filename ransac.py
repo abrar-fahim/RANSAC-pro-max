@@ -7,7 +7,6 @@ from scipy import stats
 import open3d as o3d
 from sklearn.cluster import DBSCAN
 
-from parameters import parameters
 
 np.random.seed(0)
 
@@ -36,7 +35,7 @@ def draw_planes(segments, max_plane_idx):
 
   plt.show()
 
-def add_noise(rest):
+def add_noise(rest, parameters):
   nprest = np.asarray(rest.points)
   min = np.min(nprest, axis=0)
   max = np.max(nprest, axis=0)
@@ -70,7 +69,7 @@ def draw_segment_boundaries(segments, num_planes):
 
 
 
-def determine_thresold(xyz, filtered_points_only=False):
+def determine_thresold(xyz, parameters, filtered_points_only=False):
   xyz = np.array(xyz)
   if filtered_points_only:
     xyz = get_non_noisy_points(xyz)
@@ -78,6 +77,8 @@ def determine_thresold(xyz, filtered_points_only=False):
 
   tree = KDTree(np.array(xyz), leaf_size=2)
   nearest_dist, nearest_ind = tree.query(xyz, k=parameters['nearest_neighbor_count']) 
+
+  print('KK ', parameters['nearest_neighbor_count'])
   # nearest dist shape: (n, k)
 
   nearest_dist_sorted = np.sort(nearest_dist, axis=0)
@@ -173,11 +174,17 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000, sampling_method='random')
   inliers=[]
   n_points=len(xyz)
 
-  inlier_counts = []
-  iteration_number = []
+  # inlier_counts = []
+  # iteration_number = []
 
   i=1
   vertices = sample_convex_hull(xyz, refined_hull= (sampling_method == 'refined_convex_hull'))
+
+  graph = {
+    'iterations': [],
+    'inliers': [],
+        
+    }
 
   while i<iterations:
 
@@ -205,17 +212,21 @@ def ransac_plane(xyz, threshold=0.01, iterations=1000, sampling_method='random')
 
     
     if len(idx_candidates) > len(inliers):
-      inlier_counts.append(len(idx_candidates))
-      iteration_number.append(i)
+      # inlier_counts.append(len(idx_candidates))
+      # iteration_number.append(i)
+      graph['iterations'].append(i)
+      graph['inliers'].append(len(idx_candidates))
 
       
       equation = [a,b,c,d]
       inliers = idx_candidates
+
+      
     
     i+=1
 
-  print('inliers', len(inliers))
-  print('iteration number', iteration_number[-1])
+  # print('inliers', len(inliers))
+  # print('iteration number', iteration_number[-1])
   # plt.scatter(iteration_number, inlier_counts)
   # plt.show()
-  return equation, inliers
+  return equation, inliers, graph

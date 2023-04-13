@@ -1,5 +1,7 @@
 from enum import Enum
 
+import pprint
+
 #create paths and load data
 
 
@@ -39,8 +41,34 @@ parameters = {
 
     # changing
     'input_path': input_paths['laptop'],
-    'add_noise': False,
+    'object_name': 'laptop',
+    'add_noise': True,
     'sampling_method': 'random', # 'random', 'convex_hull' or 'refined_convex_hull',
-    'automatic_num_planes': True, # True doesnt work for noise,
+    'automatic_num_planes': False, # True doesnt work for noise,
     'max_plane_idx': 4,
 }
+
+def generate_parameters_to_experiment():
+    # cloning above parameter list for different objects
+
+    #copy an element multiple times in python array
+    cloned_parameters = [parameters.copy() for _ in range(len(input_paths))]
+
+    parameters_to_experiment = []
+
+
+
+    for i, path in enumerate(input_paths):
+        print(i, path)
+
+        changed_parameters = cloned_parameters[i]
+
+        changed_parameters['input_path'] = input_paths[path]
+        changed_parameters['object_name'] = str(path)
+        parameters_to_experiment.append(changed_parameters)
+
+    
+
+
+    return parameters_to_experiment
+
