@@ -5,22 +5,6 @@ import pprint
 #create paths and load data
 
 
-# input_path="dataset/02691156/1a32f10b20170883663e90eaf6b4ca52_8x8.npz" # aeroplane 2
-# input_path="dataset/03636649/1a5ebc8575a4e5edcc901650bbbbb0b5_8x8.npz" # lamp
-
-
-# input_path = 'dataset/04379243/1a2914169a3a1536a71646339441ab0c_8x8.npz'
-
-class Sampling_method(Enum):
-    CONVEX_HULL = 1
-    GREEN = 2
-    BLUE = 3
-
-# input paths we're using
-# input_path="dataset/03797390/fad118b32085f3f2c2c72e575af174cd_8x8.npz" # mug
-
-# input_path="dataset/02691156/1a04e3eab45ca15dd86060f189eb133_8x8.npz" # aeroplane
-
 input_paths = {
     'mug': "dataset/03797390/fad118b32085f3f2c2c72e575af174cd_8x8.npz",
     'aeroplane': "dataset/02691156/1a04e3eab45ca15dd86060f189eb133_8x8.npz",
