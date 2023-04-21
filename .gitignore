@@ -6,6 +6,31 @@ __pycache__/
 # C extensions
 *.so
 
+
+dataset/*
+
+!dataset/03797390
+!dataset/02691156
+!dataset/04379243
+!dataset/04225987
+!dataset/03642806
+
+dataset/03797390/*
+dataset/02691156/*
+dataset/04379243/*
+dataset/04225987/*
+dataset/03642806/*
+
+!dataset/03797390/fad118b32085f3f2c2c72e575af174cd_8x8.npz
+!dataset/02691156/1a04e3eab45ca15dd86060f189eb133_8x8.npz
+!dataset/04379243/1a2914169a3a1536a71646339441ab0c_8x8.npz
+!dataset/04225987/1ad8d7573dc57ebc247a956ed3779e34_8x8.npz
+!dataset/03642806/1a46d6683450f2dd46c0b76a60ee4644_8x8.npz
+
+
+
+
+
 # Distribution / packaging
 .Python
 build/
