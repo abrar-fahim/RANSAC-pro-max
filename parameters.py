@@ -24,12 +24,12 @@ parameters = {
 
 
     # changing
-    'input_path': input_paths['laptop'],
-    'object_name': 'laptop',
-    'add_noise': True,
+    'input_path': input_paths['aeroplane'],
+    'object_name': 'aeroplane',
+    'add_noise': False,
     'sampling_method': 'random', # 'random', 'convex_hull' or 'refined_convex_hull',
     'automatic_num_planes': False, # True doesnt work for noise,
-    'max_plane_idx': 4,
+    'max_plane_idx': 4, # this is the number of planes if automatic_num_planes is False. if automatic_num_planes is True, this is the maximum number of planes to try
 }
 
 def generate_parameters_to_experiment():
@@ -39,6 +39,8 @@ def generate_parameters_to_experiment():
     cloned_parameters = [parameters.copy() for _ in range(len(input_paths))]
 
     parameters_to_experiment = []
+
+
 
 
 

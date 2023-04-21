@@ -84,7 +84,7 @@ def segment_into_planes(parameters, visualize=False):
 
     if visualize:
         o3d.visualization.draw_geometries([segments[i] for i in range(num_planes)])
-        # draw_segment_boundaries(segments, num_planes)
+        draw_segment_boundaries(segments, num_planes)
         # o3d.visualization.draw_geometries([segments[i] for i in range(num_planes)]+[rest])
 
         # return no of iterations vs inliers
